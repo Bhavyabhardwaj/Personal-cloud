@@ -1,5 +1,5 @@
 {
-  "name": "full stack assignment",
+  "name": "full",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -10,7 +10,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.45",
     "prettier": "^3.2.5",
+    "tailwindcss": "^3.4.11",
     "turbo": "^2.1.2",
     "typescript": "^5.4.5"
   },
@@ -21,5 +24,13 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@shadcn/ui": "^0.0.4",
+    "@simplewebauthn/server": "^10.0.1",
+    "cloudinary": "^2.4.0",
+    "next-auth": "^4.24.7",
+    "next-cloudinary": "^6.13.0",
+    "openapi-trpc": "^0.2.0"
+  }
 }

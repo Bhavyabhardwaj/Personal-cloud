@@ -1,5 +1,5 @@
 {
-  "id": "22c28c43-dd2d-42e6-8726-d2b85c3639a1",
+  "id": "8bdb9b29-5f87-4d28-ba1b-2894538402fe",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -322,6 +322,18 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        },
+        "current_challenge": {
+          "name": "current_challenge",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "public_key": {
+          "name": "public_key",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

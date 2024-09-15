@@ -3,7 +3,7 @@ import { Pool } from "pg";
 
 // Create a new PostgreSQL pool
 const pool = new Pool({
-  connectionString: "postgres://user:password@localhost:5432/postgres",
+  connectionString: "postgresql://postgres:mysecretpassword@localhost:5432/postgres",
 });
 
 

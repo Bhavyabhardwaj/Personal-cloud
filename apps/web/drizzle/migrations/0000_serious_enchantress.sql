@@ -45,6 +45,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"email" varchar(255) NOT NULL,
 	"name" varchar(255),
 	"created_at" timestamp DEFAULT now(),
+	"current_challenge" varchar(255),
+	"public_key" varchar(255),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

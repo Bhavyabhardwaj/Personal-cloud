@@ -1,11 +1,13 @@
 import { pgTable, serial, varchar, text, integer, timestamp } from 'drizzle-orm/pg-core';
 
 // Users table
-export const users = pgTable('users', {
+export const users = pgTable('public.users', {
   id: serial('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   name: varchar('name', { length: 255 }),
   createdAt: timestamp('created_at').defaultNow(),
+  currentChallenge: varchar('current_challenge', { length: 255 }),
+  public: varchar('public_key',{length: 255}),
 });
 
 // Files table
