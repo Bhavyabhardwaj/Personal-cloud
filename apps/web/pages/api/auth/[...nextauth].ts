@@ -5,56 +5,56 @@ import { users } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
 
-
 export default NextAuth({
-    providers: [
-        CredentialsProvider({
-            name: "Testing",
-            credentials: {
-                email: { label: "Email", type: "email" },
-                password: { label: "Password", type: "password" },
-            },
-            async authorize(credentials){
-                if (!credentials){
-                    return null;
-                }
-                const user = await db.select().from(users).where(eq(users.email, credentials.email)).limit(1);
-
-                if(!user[0]){
-                    return null;
-                }
-
-                // generate auth options
-                const options = await generateAuthenticationOptions({
-                    allowCredentials: [{
-                         id: user[0].id as any,
-                        },
-                    ],
-                    userVerification: "preferred",
-                    rpID: "http://localhost:3000"
-                });
-
-                //store the cllnge
-                await db.update(users).set({ currentChallenge: options.challenge}).where(eq(users.id, user[0].id));
-
-                //return it to client
-                return{ id: user[0].id.toString(), email: user[0].email , options};
-            },
-        }),
-    ],
-    callbacks: {
-        async jwt({token , user}) {
-            if(user){
-                token.id = user.id;
-            }
-            return token;
+  providers: [
+    CredentialsProvider({
+      name: "Passkey Login",
+      credentials: {
+        email: { label: "Email", type: "email" }, // for identifying the user
+        webauthnResponse: { label: "WebAuthn Response", type: "text" }, // for WebAuthn
+      },
+      async authorize(credentials) {
+        if (!credentials || !credentials.email) {
+          return null;
         }
+
+        // Step 1: Find user in the database by email
+        const user = await db.select().from(users).where(eq(users.email, credentials.email)).limit(1);
+
+        if (!user[0]) {
+          return null; // Return null if user doesn't exist
+        }
+
+        // Step 2: Generate WebAuthn authentication options
+        const options = generateAuthenticationOptions({
+          allowCredentials: [{
+            id: user[0].passkeyId as Buffer, // Assuming `passkeyId` is stored in the DB
+            type: "public-key",
+          }],
+          userVerification: "preferred",
+          rpID: "localhost", // For development; change in production to your actual domain
+        });
+
+        // Step 3: Store the current challenge in the database for future verification
+        await db.update(users).set({ currentChallenge: options.challenge }).where(eq(users.id, user[0].id));
+
+        // Returning options to be used in the frontend for authentication (WebAuthn)
+        return { id: user[0].id.toString(), email: user[0].email, options };
+      },
+    }),
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
     },
-    //@ts-ignore
     async session({ session, token }) {
-        if (token && session.user){
-            session.user.id = token.id;
-        }
-        return session;
+      if (token && session.user) {
+        session.user.id = token.id;
+      }
+      return session;
     },
-});    
+  },
+});
